@@ -38,6 +38,11 @@ public class MainScreen extends javax.swing.JFrame {
         jMenuRegister.setText("Register");
 
         jMenuActorRegister.setText("Actor");
+        jMenuActorRegister.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openActorRegistration(evt);
+            }
+        });
         jMenuRegister.add(jMenuActorRegister);
 
         jMenuMovieRegister.setText("Movie");
@@ -74,6 +79,14 @@ public class MainScreen extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void openActorRegistration(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openActorRegistration
+
+        this.setVisible(false);
+        ActorRegistrationScreen actorRegistrationScreen = new ActorRegistrationScreen(this);
+        actorRegistrationScreen.setVisible(true);
+
+    }//GEN-LAST:event_openActorRegistration
 
     /**
      * @param args the command line arguments

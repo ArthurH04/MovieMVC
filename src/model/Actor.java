@@ -12,16 +12,29 @@ import java.util.Date;
 
 public class Actor {
     
-    String name;
-    String nationality;
-    String gender;
-    Date birthDate;
+    private int id;
+    private String name;
+    private String nationality;
+    private String gender;
+    private Date birthDate;
 
+    public Actor() {
+        
+    }
+    
     public Actor(String name, String nationality, String gender, Date birthDate) {
         this.name = name;
         this.nationality = nationality;
         this.gender = gender;
         this.birthDate = birthDate;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -60,8 +73,8 @@ public class Actor {
         new ActorDAO().registerActor(actor);
     }
     
-    public ArrayList<Actor> listActor(Actor actor) {
-        return new ActorDAO().listActor();
+    public ArrayList<Actor> listActor(String name) {
+        return new ActorDAO().listActor(name);
     }
     
     public void updateActor(Actor actor) {

@@ -53,6 +53,11 @@ public class MainScreen extends javax.swing.JFrame {
         jMenuQuery.setText("Query");
 
         jMenuActorQuery.setText("Actor");
+        jMenuActorQuery.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openActorQuery(evt);
+            }
+        });
         jMenuQuery.add(jMenuActorQuery);
 
         jMenuMovieQuery.setText("Movie");
@@ -87,6 +92,12 @@ public class MainScreen extends javax.swing.JFrame {
         actorRegistrationScreen.setVisible(true);
 
     }//GEN-LAST:event_openActorRegistration
+
+    private void openActorQuery(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openActorQuery
+        this.setVisible(false);
+        ActorQueryScreen actorQueryScreen = new ActorQueryScreen(this);
+        actorQueryScreen.setVisible(true);
+    }//GEN-LAST:event_openActorQuery
 
     /**
      * @param args the command line arguments

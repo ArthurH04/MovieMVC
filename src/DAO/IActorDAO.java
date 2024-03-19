@@ -10,7 +10,7 @@ import model.Actor;
 public interface IActorDAO {
     
     void registerActor(Actor actor);
-    ArrayList<Actor> listActor();
+    ArrayList<Actor> listActor(String name);
     void updateActor(Actor actor);
     void deleteActor(Actor actor);
     

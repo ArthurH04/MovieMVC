@@ -4,9 +4,11 @@
  */
 package controller;
 
+import DAO.ActorDAO;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import model.Actor;
 
@@ -35,5 +37,9 @@ public class ActorController {
             }
         }
         return true;
+    }
+    
+    public ArrayList<Actor> listActors(String name)  {
+        return new ActorDAO().listActor(name);
     }
 }

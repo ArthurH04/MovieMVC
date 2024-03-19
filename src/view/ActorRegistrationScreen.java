@@ -6,11 +6,12 @@ package view;
 
 import controller.ActorController;
 import java.awt.event.ActionEvent;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class ActorRegistrationScreen extends javax.swing.JFrame {
 
-    private MainScreen mainScreen;
+    private JFrame previousScreen;
 
     /**
      * Creates new form MainScreen
@@ -19,9 +20,9 @@ public class ActorRegistrationScreen extends javax.swing.JFrame {
         initComponents();
     }
 
-    public ActorRegistrationScreen(MainScreen mainScreen) {
+    public ActorRegistrationScreen(JFrame previousScreen) {
         initComponents();
-        this.mainScreen = mainScreen;
+        this.previousScreen = previousScreen;
     }
 
     /**
@@ -117,6 +118,11 @@ public class ActorRegistrationScreen extends javax.swing.JFrame {
         jMenuQuery.setText("Query");
 
         jMenuActorQuery.setText("Actor");
+        jMenuActorQuery.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openActorQuery(evt);
+            }
+        });
         jMenuQuery.add(jMenuActorQuery);
 
         jMenuMovieQuery.setText("Movie");
@@ -189,7 +195,7 @@ public class ActorRegistrationScreen extends javax.swing.JFrame {
 
     private void closeWindow(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeWindow
         this.dispose();
-        mainScreen.setVisible(true);
+        previousScreen.setVisible(true);
     }//GEN-LAST:event_closeWindow
 
     private void saveActor(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActor
@@ -225,8 +231,14 @@ public class ActorRegistrationScreen extends javax.swing.JFrame {
 
     private void cancelRegistration(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelRegistration
         this.dispose();
-        mainScreen.setVisible(true);
+        previousScreen.setVisible(true);
     }//GEN-LAST:event_cancelRegistration
+
+    private void openActorQuery(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openActorQuery
+        this.setVisible(false);
+        ActorQueryScreen actorQueryScreen = new ActorQueryScreen(this);
+        actorQueryScreen.setVisible(true);
+    }//GEN-LAST:event_openActorQuery
 
     /**
      * @param args the command line arguments

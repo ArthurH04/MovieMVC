@@ -4,13 +4,28 @@
  */
 package view;
 
+import controller.ActorController;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import javax.swing.JFrame;
+import javax.swing.table.DefaultTableModel;
+import model.Actor;
+
 public class ActorQueryScreen extends javax.swing.JFrame {
+
+    private JFrame previousScreen;
 
     /**
      * Creates new form MainScreen
      */
     public ActorQueryScreen() {
         initComponents();
+    }
+
+    public ActorQueryScreen(JFrame previousScreen) {
+        initComponents();
+        this.previousScreen = previousScreen;
     }
 
     /**
@@ -22,6 +37,12 @@ public class ActorQueryScreen extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTableActorQuery = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        jTextFieldActorName = new javax.swing.JTextField();
+        jButtonQuery = new javax.swing.JButton();
+        jButtonEdit = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuRegister = new javax.swing.JMenu();
         jMenuActorRegister = new javax.swing.JMenuItem();
@@ -30,13 +51,69 @@ public class ActorQueryScreen extends javax.swing.JFrame {
         jMenuMovieQuery = new javax.swing.JMenuItem();
         jMenuExit = new javax.swing.JMenu();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Main Screen");
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Actor Query Screen");
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                closeWindow(evt);
+            }
+        });
+
+        jTableActorQuery.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Name", "Gender", "Nationality", "Birth Date"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(jTableActorQuery);
+
+        jLabel1.setFont(new java.awt.Font("Cambria", 0, 18)); // NOI18N
+        jLabel1.setText("Actor name:");
+
+        jButtonQuery.setText("Query");
+        jButtonQuery.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                queryActor(evt);
+            }
+        });
+
+        jButtonEdit.setText("Edit");
+        jButtonEdit.setEnabled(false);
+        jButtonEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editActor(evt);
+            }
+        });
 
         jMenuRegister.setText("Register");
 
         jMenuActorRegister.setText("Actor");
+        jMenuActorRegister.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openActorRegister(evt);
+            }
+        });
         jMenuRegister.add(jMenuActorRegister);
 
         jMenuMovieRegister.setText("Movie");
@@ -60,16 +137,89 @@ public class ActorQueryScreen extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 800, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jTextFieldActorName, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonQuery)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 250, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 477, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jTextFieldActorName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonQuery)
+                    .addComponent(jButtonEdit))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 422, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void closeWindow(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeWindow
+        this.dispose();
+        previousScreen.setVisible(true);
+    }//GEN-LAST:event_closeWindow
+
+    private void queryActor(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_queryActor
+
+        String name = jTextFieldActorName.getText();
+        DefaultTableModel tableModel = (DefaultTableModel) jTableActorQuery.getModel();
+        tableModel.setNumRows(0);
+        
+        jTableActorQuery.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 1) {
+                    jButtonEdit.setEnabled(true);
+                }else {
+                    jButtonEdit.setEnabled(false);
+                }
+            }
+        });
+
+        try {
+            ActorController actorController = new ActorController();
+            ArrayList<Actor> actors = actorController.listActors(name);
+
+            for (Actor actor : actors) {
+                tableModel.addRow(new Object[]{
+                    actor.getName(),
+                    actor.getGender(),
+                    actor.getNationality(),
+                    actor.getBirthDate()});
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }//GEN-LAST:event_queryActor
+
+    private void openActorRegister(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openActorRegister
+        this.setVisible(false);
+        ActorRegistrationScreen actorRegistrationScreen = new ActorRegistrationScreen(this);
+        actorRegistrationScreen.setVisible(true);
+    }//GEN-LAST:event_openActorRegister
+
+    private void editActor(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editActor
+        
+        if (rootPaneCheckingEnabled) {
+            
+        }
+        
+    }//GEN-LAST:event_editActor
 
     /**
      * @param args the command line arguments
@@ -108,6 +258,9 @@ public class ActorQueryScreen extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonEdit;
+    private javax.swing.JButton jButtonQuery;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JMenuItem jMenuActorRegister;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenu jMenuExit;
@@ -115,5 +268,8 @@ public class ActorQueryScreen extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuMovieRegister;
     private javax.swing.JMenu jMenuQuery;
     private javax.swing.JMenu jMenuRegister;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTableActorQuery;
+    private javax.swing.JTextField jTextFieldActorName;
     // End of variables declaration//GEN-END:variables
 }

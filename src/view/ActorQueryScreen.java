@@ -8,24 +8,31 @@ import controller.ActorController;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import model.Actor;
 
 public class ActorQueryScreen extends javax.swing.JFrame {
 
     private JFrame previousScreen;
+    ActorEditScreen actorEditScreen = new ActorEditScreen(this);
 
     /**
      * Creates new form MainScreen
      */
     public ActorQueryScreen() {
         initComponents();
+        initSearch();
     }
 
     public ActorQueryScreen(JFrame previousScreen) {
         initComponents();
         this.previousScreen = previousScreen;
+        initSearch();
     }
 
     /**
@@ -43,6 +50,8 @@ public class ActorQueryScreen extends javax.swing.JFrame {
         jTextFieldActorName = new javax.swing.JTextField();
         jButtonQuery = new javax.swing.JButton();
         jButtonEdit = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        jButtonDelete = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuRegister = new javax.swing.JMenu();
         jMenuActorRegister = new javax.swing.JMenuItem();
@@ -62,20 +71,17 @@ public class ActorQueryScreen extends javax.swing.JFrame {
 
         jTableActorQuery.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Name", "Gender", "Nationality", "Birth Date"
+                "id", "Name", "Gender", "Nationality", "Birth Date"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -102,7 +108,18 @@ public class ActorQueryScreen extends javax.swing.JFrame {
         jButtonEdit.setEnabled(false);
         jButtonEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editActor(evt);
+                jButtonEdit(evt);
+            }
+        });
+
+        jLabel2.setFont(new java.awt.Font("Cambria", 0, 24)); // NOI18N
+        jLabel2.setText("Actor Query");
+
+        jButtonDelete.setText("Delete");
+        jButtonDelete.setEnabled(false);
+        jButtonDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDelete(evt);
             }
         });
 
@@ -140,29 +157,36 @@ public class ActorQueryScreen extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                         .addComponent(jTextFieldActorName, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButtonQuery)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButtonEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 250, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonDelete)
+                        .addGap(178, 178, 178))))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(343, 343, 343)
+                .addComponent(jLabel2)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jTextFieldActorName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonEdit)
                     .addComponent(jButtonQuery)
-                    .addComponent(jButtonEdit))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 422, Short.MAX_VALUE)
+                    .addComponent(jTextFieldActorName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
+                    .addComponent(jButtonDelete))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -175,18 +199,43 @@ public class ActorQueryScreen extends javax.swing.JFrame {
         previousScreen.setVisible(true);
     }//GEN-LAST:event_closeWindow
 
-    private void queryActor(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_queryActor
+    private void initSearch() {
+        jTextFieldActorName.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                updateTable();
+            }
 
-        String name = jTextFieldActorName.getText();
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updateTable();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                updateTable();
+            }
+
+            private void updateTable() {
+                String name = jTextFieldActorName.getText();
+                searchActor(name);
+            }
+        });
+    }
+
+    private void searchActor(String name) {
         DefaultTableModel tableModel = (DefaultTableModel) jTableActorQuery.getModel();
         tableModel.setNumRows(0);
-        
+
         jTableActorQuery.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1) {
                     jButtonEdit.setEnabled(true);
-                }else {
+                    jButtonDelete.setEnabled(true);
+                } else {
                     jButtonEdit.setEnabled(false);
+                    jButtonDelete.setEnabled(false);
                 }
             }
         });
@@ -197,6 +246,7 @@ public class ActorQueryScreen extends javax.swing.JFrame {
 
             for (Actor actor : actors) {
                 tableModel.addRow(new Object[]{
+                    actor.getId(),
                     actor.getName(),
                     actor.getGender(),
                     actor.getNationality(),
@@ -205,6 +255,11 @@ public class ActorQueryScreen extends javax.swing.JFrame {
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    private void queryActor(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_queryActor
+        String name = jTextFieldActorName.getText();
+        searchActor(name);
     }//GEN-LAST:event_queryActor
 
     private void openActorRegister(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openActorRegister
@@ -213,13 +268,42 @@ public class ActorQueryScreen extends javax.swing.JFrame {
         actorRegistrationScreen.setVisible(true);
     }//GEN-LAST:event_openActorRegister
 
-    private void editActor(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editActor
-        
-        if (rootPaneCheckingEnabled) {
-            
+    private void jButtonEdit(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEdit
+
+        int id = (Integer) jTableActorQuery.getModel().getValueAt(jTableActorQuery.getSelectedRow(), 0);
+        String name = (String) jTableActorQuery.getModel().getValueAt(jTableActorQuery.getSelectedRow(), 1);
+        String gender = (String) jTableActorQuery.getModel().getValueAt(jTableActorQuery.getSelectedRow(), 2);
+        String nationality = (String) jTableActorQuery.getModel().getValueAt(jTableActorQuery.getSelectedRow(), 3);
+        Date birthDate = (Date) jTableActorQuery.getModel().getValueAt(jTableActorQuery.getSelectedRow(), 4);
+
+        actorEditScreen.getData(id, name, gender, nationality, birthDate);
+
+        this.setVisible(false);
+        actorEditScreen.setVisible(true);
+    }//GEN-LAST:event_jButtonEdit
+
+    private void jButtonDelete(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelete
+
+        boolean success;
+
+        int id = (Integer) jTableActorQuery.getModel().getValueAt(jTableActorQuery.getSelectedRow(), 0);
+
+        try {
+            ActorController actorController = new ActorController();
+
+            success = actorController.deleteActor(id);
+            if (success) {
+                JOptionPane.showMessageDialog(null, "Successfully deleted actor!");
+                String name = jTextFieldActorName.getText();
+                searchActor(name);
+            } else {
+                JOptionPane.showMessageDialog(null, "Error deleting actor");
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
         }
-        
-    }//GEN-LAST:event_editActor
+    }//GEN-LAST:event_jButtonDelete
 
     /**
      * @param args the command line arguments
@@ -258,9 +342,11 @@ public class ActorQueryScreen extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonDelete;
     private javax.swing.JButton jButtonEdit;
     private javax.swing.JButton jButtonQuery;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JMenuItem jMenuActorRegister;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenu jMenuExit;
@@ -272,4 +358,5 @@ public class ActorQueryScreen extends javax.swing.JFrame {
     private javax.swing.JTable jTableActorQuery;
     private javax.swing.JTextField jTextFieldActorName;
     // End of variables declaration//GEN-END:variables
+
 }

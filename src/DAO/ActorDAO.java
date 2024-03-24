@@ -8,9 +8,9 @@ import infra.ConnectionFactory;
 import java.util.ArrayList;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Date;
 import model.Actor;
 
 public class ActorDAO implements IActorDAO {
@@ -59,7 +59,7 @@ public class ActorDAO implements IActorDAO {
         Connection connection = null;
         ArrayList<Actor> actors = null;
 
-        String sql = "SELECT * FROM actor WHERE name LIKE '%" + name + "%' ORDER BY name";
+        String sql = "SELECT * FROM actor WHERE name LIKE '%" + name + "%' ORDER BY actor_id";
 
         try {
             connection = ConnectionFactory.getConnection();
@@ -103,6 +103,40 @@ public class ActorDAO implements IActorDAO {
 
     @Override
     public void updateActor(Actor actor) {
+        
+        PreparedStatement ps = null;
+        Connection connection = null;
+        
+        String sql = "UPDATE actor SET name = ?, gender = ?, nationality = ?, birthDate = ? WHERE actor_id = ? ";
+        
+        try {
+            connection = ConnectionFactory.getConnection();
+            ps = connection.prepareStatement(sql);
+            
+            ps.setString(1, actor.getName());
+            ps.setString(2, actor.getGender());
+            ps.setString(3, actor.getNationality());
+            ps.setDate(4, new Date(actor.getBirthDate().getTime()));
+            ps.setInt(5, actor.getId());
+            ps.execute();
+            
+        } catch (SQLException e) {
+            System.out.println(e);
+        }finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                System.out.println(e);
+            }try {
+                if (ps != null) {
+                ps.close();
+            }
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
     }
 
     @Override

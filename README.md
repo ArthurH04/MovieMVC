@@ -6,10 +6,9 @@ This project involves registering movies and actors, and making the respective a
 
 ## TODO
 
-- [ ] Design the remaining screens (MainScreen, MovieRegistrationScreen, MovieQueryScreen, MovieEditScreen)
-- [ ] Write the code for the controllers, models, and DAO classes for Movie
-
 ## Done ✓
 
 - [x] Completed the ActorDAO, controllers, models for Actor
 - [x] Design ActorRegistrationScreen, ActorQueryScreen, ActorEditScreen
+- [x] Design the remain screens
+- [x] Write the code for the controllers, models, and DAO classes

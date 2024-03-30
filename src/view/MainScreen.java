@@ -4,6 +4,12 @@
  */
 package view;
 
+import view.movie.MovieRegistrationScreen;
+import view.movie.MovieQueryScreen;
+import view.actor.ActorRegistrationScreen;
+import view.actor.ActorQueryScreen;
+import view.actorFilm.ActorMovieAssociation;
+
 public class MainScreen extends javax.swing.JFrame {
 
     /**
@@ -29,6 +35,7 @@ public class MainScreen extends javax.swing.JFrame {
         jMenuQuery = new javax.swing.JMenu();
         jMenuActorQuery = new javax.swing.JMenuItem();
         jMenuMovieQuery = new javax.swing.JMenuItem();
+        jMenuAssociation = new javax.swing.JMenu();
         jMenuExit = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -46,6 +53,11 @@ public class MainScreen extends javax.swing.JFrame {
         jMenuRegister.add(jMenuActorRegister);
 
         jMenuMovieRegister.setText("Movie");
+        jMenuMovieRegister.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openMovieRegistration(evt);
+            }
+        });
         jMenuRegister.add(jMenuMovieRegister);
 
         jMenuBar1.add(jMenuRegister);
@@ -61,11 +73,29 @@ public class MainScreen extends javax.swing.JFrame {
         jMenuQuery.add(jMenuActorQuery);
 
         jMenuMovieQuery.setText("Movie");
+        jMenuMovieQuery.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openMovieQuery(evt);
+            }
+        });
         jMenuQuery.add(jMenuMovieQuery);
 
         jMenuBar1.add(jMenuQuery);
 
+        jMenuAssociation.setText("Association");
+        jMenuAssociation.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                openActorMovieAssociation(evt);
+            }
+        });
+        jMenuBar1.add(jMenuAssociation);
+
         jMenuExit.setText("Exit");
+        jMenuExit.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                exit(evt);
+            }
+        });
         jMenuBar1.add(jMenuExit);
 
         setJMenuBar(jMenuBar1);
@@ -78,7 +108,7 @@ public class MainScreen extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 477, Short.MAX_VALUE)
+            .addGap(0, 478, Short.MAX_VALUE)
         );
 
         pack();
@@ -98,6 +128,28 @@ public class MainScreen extends javax.swing.JFrame {
         ActorQueryScreen actorQueryScreen = new ActorQueryScreen(this);
         actorQueryScreen.setVisible(true);
     }//GEN-LAST:event_openActorQuery
+
+    private void openMovieRegistration(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMovieRegistration
+        this.setVisible(false);
+        MovieRegistrationScreen movieRegistrationScreen = new MovieRegistrationScreen(this);
+        movieRegistrationScreen.setVisible(true);
+    }//GEN-LAST:event_openMovieRegistration
+
+    private void exit(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exit
+        System.exit(0);
+    }//GEN-LAST:event_exit
+
+    private void openMovieQuery(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMovieQuery
+        this.setVisible(false);
+        MovieQueryScreen movieQueryScreen = new MovieQueryScreen(this);
+        movieQueryScreen.setVisible(true);
+    }//GEN-LAST:event_openMovieQuery
+
+    private void openActorMovieAssociation(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_openActorMovieAssociation
+        this.setVisible(false);
+        ActorMovieAssociation actorMovieAssociation = new ActorMovieAssociation(this);
+        actorMovieAssociation.setVisible(true);
+    }//GEN-LAST:event_openActorMovieAssociation
 
     /**
      * @param args the command line arguments
@@ -137,6 +189,7 @@ public class MainScreen extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem jMenuActorQuery;
     private javax.swing.JMenuItem jMenuActorRegister;
+    private javax.swing.JMenu jMenuAssociation;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenu jMenuExit;
     private javax.swing.JMenuItem jMenuMovieQuery;

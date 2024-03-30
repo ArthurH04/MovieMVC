@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package view;
+package view.actor;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import controller.ActorController;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -15,6 +16,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import model.Actor;
+import view.actorFilm.ActorMovieAssociation;
+import view.movie.MovieQueryScreen;
+import view.movie.MovieRegistrationScreen;
 
 public class ActorQueryScreen extends javax.swing.JFrame {
 
@@ -58,10 +62,11 @@ public class ActorQueryScreen extends javax.swing.JFrame {
         jMenuMovieRegister = new javax.swing.JMenuItem();
         jMenuQuery = new javax.swing.JMenu();
         jMenuMovieQuery = new javax.swing.JMenuItem();
+        jMenuAssociation = new javax.swing.JMenu();
         jMenuExit = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Actor Query Screen");
+        setTitle("Actor Query");
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
@@ -134,6 +139,11 @@ public class ActorQueryScreen extends javax.swing.JFrame {
         jMenuRegister.add(jMenuActorRegister);
 
         jMenuMovieRegister.setText("Movie");
+        jMenuMovieRegister.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openMovieRegistration(evt);
+            }
+        });
         jMenuRegister.add(jMenuMovieRegister);
 
         jMenuBar1.add(jMenuRegister);
@@ -141,11 +151,29 @@ public class ActorQueryScreen extends javax.swing.JFrame {
         jMenuQuery.setText("Query");
 
         jMenuMovieQuery.setText("Movie");
+        jMenuMovieQuery.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openMovieQuery(evt);
+            }
+        });
         jMenuQuery.add(jMenuMovieQuery);
 
         jMenuBar1.add(jMenuQuery);
 
+        jMenuAssociation.setText("Association");
+        jMenuAssociation.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuAssociationopenActorMovieAssociation(evt);
+            }
+        });
+        jMenuBar1.add(jMenuAssociation);
+
         jMenuExit.setText("Exit");
+        jMenuExit.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                exit(evt);
+            }
+        });
         jMenuBar1.add(jMenuExit);
 
         setJMenuBar(jMenuBar1);
@@ -156,29 +184,30 @@ public class ActorQueryScreen extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
-                        .addComponent(jTextFieldActorName, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButtonQuery)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButtonEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonDelete)
-                        .addGap(178, 178, 178))))
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addComponent(jTextFieldActorName, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButtonQuery)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButtonEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonDelete)
+                .addGap(178, 178, 178))
             .addGroup(layout.createSequentialGroup()
                 .addGap(343, 343, 343)
                 .addComponent(jLabel2)
                 .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonEdit)
                     .addComponent(jButtonQuery)
@@ -287,23 +316,51 @@ public class ActorQueryScreen extends javax.swing.JFrame {
         boolean success;
 
         int id = (Integer) jTableActorQuery.getModel().getValueAt(jTableActorQuery.getSelectedRow(), 0);
+        String ActorNameTable = (String) jTableActorQuery.getModel().getValueAt(jTableActorQuery.getSelectedRow(), 1);
 
         try {
             ActorController actorController = new ActorController();
 
-            success = actorController.deleteActor(id);
-            if (success) {
-                JOptionPane.showMessageDialog(null, "Successfully deleted actor!");
-                String name = jTextFieldActorName.getText();
-                searchActor(name);
-            } else {
-                JOptionPane.showMessageDialog(null, "Error deleting actor");
+            int response = JOptionPane.showConfirmDialog(null, String.format("Do you want to delete the actor %s?", ActorNameTable), "Confirm", JOptionPane.YES_NO_OPTION);
+
+            if (response == JOptionPane.YES_OPTION) {
+                success = actorController.deleteActor(id);
+                if (success) {
+                    JOptionPane.showMessageDialog(null, "Successfully deleted actor!");
+                    String name = jTextFieldActorName.getText();
+                    searchActor(name);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Error deleting actor");
+                }
             }
 
-        } catch (Exception e) {
-            System.out.println(e);
+        } catch (SQLIntegrityConstraintViolationException e) {
+            JOptionPane.showMessageDialog(null, String.format("Error deleting the actor '%s'. This actor is associated with a movie.", ActorNameTable));
+
         }
     }//GEN-LAST:event_jButtonDelete
+
+    private void exit(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exit
+        System.exit(0);
+    }//GEN-LAST:event_exit
+
+    private void jMenuAssociationopenActorMovieAssociation(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuAssociationopenActorMovieAssociation
+        this.setVisible(false);
+        ActorMovieAssociation actorMovieAssociation = new ActorMovieAssociation(this);
+        actorMovieAssociation.setVisible(true);
+    }//GEN-LAST:event_jMenuAssociationopenActorMovieAssociation
+
+    private void openMovieRegistration(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMovieRegistration
+        this.setVisible(false);
+        MovieRegistrationScreen movieRegistrationScreen = new MovieRegistrationScreen(this);
+        movieRegistrationScreen.setVisible(true);
+    }//GEN-LAST:event_openMovieRegistration
+
+    private void openMovieQuery(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMovieQuery
+        this.setVisible(false);
+        MovieQueryScreen movieQueryScreen = new MovieQueryScreen(this);
+        movieQueryScreen.setVisible(true);
+    }//GEN-LAST:event_openMovieQuery
 
     /**
      * @param args the command line arguments
@@ -348,6 +405,7 @@ public class ActorQueryScreen extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenuItem jMenuActorRegister;
+    private javax.swing.JMenu jMenuAssociation;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenu jMenuExit;
     private javax.swing.JMenuItem jMenuMovieQuery;

@@ -5,36 +5,35 @@
 package DAO;
 
 import infra.ConnectionFactory;
-import java.sql.SQLIntegrityConstraintViolationException;
-
-import java.util.ArrayList;
-import model.Movie;
-import java.sql.PreparedStatement;
 import java.sql.Connection;
-import java.sql.Date;
-import java.sql.ResultSet;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import model.Actor;
+import model.ActorMovie;
+import model.Movie;
 
-public class MovieDAO implements IMovieDAO {
+/**
+ *
+ * @author arthur
+ */
+public class ActorMovieDAO implements IActorMovie {
 
     private PreparedStatement ps = null;
     private Connection connection = null;
 
     @Override
-    public void registerMovie(Movie movie) {
-
-        String sql = "INSERT INTO movie (name, genre, synopsis, releaseDate) VALUES (?,?,?,?)";
+    public void associateActorMovie(ActorMovie actorMovie) {
+        String sql = "INSERT INTO actormovie (actor_id, movie_id) VALUES (?, ?)";
 
         try {
             connection = ConnectionFactory.getConnection();
             ps = connection.prepareStatement(sql);
 
-            ps.setString(1, movie.getName());
-            ps.setString(2, movie.getGenre());
-            ps.setString(3, movie.getSynopsis());
-            ps.setDate(4, new Date(movie.getReleaseDate().getTime()));
+            ps.setInt(1, actorMovie.getActor().getId());
+            ps.setInt(2, actorMovie.getMovie().getId());
             ps.execute();
-
         } catch (SQLException e) {
             System.out.println(e);
         } finally {
@@ -56,29 +55,78 @@ public class MovieDAO implements IMovieDAO {
     }
 
     @Override
-    public ArrayList<Movie> listMovies(String name) {
-        ArrayList<Movie> movies = null;
+    public ArrayList<ActorMovie> listActorMovie(String movieName) {
 
-        String sql = "SELECT * FROM movie WHERE name LIKE '%" + name + "%' ORDER BY movie_id";
+        String sql = "SELECT a.actor_id, a.name AS actor_name, m.movie_id, m.name as movie_name"
+                + " FROM actormovie am"
+                + " INNER JOIN actor a ON a.actor_id = am.actor_id"
+                + " INNER JOIN movie m ON m.movie_id = am.movie_id"
+                + " WHERE m.name = ?";
+
+        ArrayList<ActorMovie> actorMovies = null;
 
         try {
             connection = ConnectionFactory.getConnection();
             ps = connection.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery(sql);
+
+            ps.setString(1, movieName);
+
+            ResultSet rs = ps.executeQuery();
 
             if (rs != null) {
-                movies = new ArrayList<>();
+                actorMovies = new ArrayList<>();
 
                 while (rs.next()) {
+                    Actor actor = new Actor();
                     Movie movie = new Movie();
+                    ActorMovie actorMovie = new ActorMovie();
+
+                    actor.setId(rs.getInt("actor_id"));
+                    actor.setName(rs.getString("actor_name"));
+
                     movie.setId(rs.getInt("movie_id"));
-                    movie.setName(rs.getString("name"));
-                    movie.setGenre(rs.getString("genre"));
-                    movie.setSynopsis(rs.getString("synopsis"));
-                    movie.setReleaseDate(rs.getDate("releaseDate"));
-                    movies.add(movie);
+                    movie.setName(rs.getString("movie_name"));
+
+                    actorMovie.setActor(actor);
+                    actorMovie.setMovie(movie);
+
+                    actorMovies.add(actorMovie);
                 }
             }
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+
+        return actorMovies;
+    }
+
+    @Override
+    public void deleteActorMovie(ActorMovie actorMovie) {
+        String sql = "DELETE FROM actormovie WHERE actor_id = ? AND movie_id = ?";
+
+        try {
+            connection = ConnectionFactory.getConnection();
+            ps = connection.prepareStatement(sql);
+
+            ps.setInt(1, actorMovie.getActor().getId());
+            ps.setInt(2, actorMovie.getMovie().getId());
+            ps.execute();
 
         } catch (SQLException e) {
             System.out.println(e);
@@ -98,76 +146,7 @@ public class MovieDAO implements IMovieDAO {
                 System.out.println(e);
             }
         }
-        return movies;
+
     }
 
-    @Override
-    public void updateMovie(Movie movie) {
-
-        String sql = "UPDATE movie SET name = ?, genre = ?, synopsis = ?, releaseDate = ? WHERE movie_id = ?";
-
-        try {
-            connection = ConnectionFactory.getConnection();
-            ps = connection.prepareStatement(sql);
-
-            ps.setString(1, movie.getName());
-            ps.setString(2, movie.getGenre());
-            ps.setString(3, movie.getSynopsis());
-            ps.setDate(4, new Date(movie.getReleaseDate().getTime()));
-            ps.setInt(5, movie.getId());
-            ps.execute();
-        } catch (SQLException e) {
-            System.out.println(e);
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException e) {
-                System.out.println(e);
-
-            }
-            try {
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                System.out.println(e);
-            }
-        }
-    }
-
-    @Override
-    public void deleteMovie(Movie movie) throws SQLIntegrityConstraintViolationException{
-        String sql = "DELETE FROM movie WHERE movie_id = ?";
-
-        try {
-            connection = ConnectionFactory.getConnection();
-            ps = connection.prepareStatement(sql);
-
-            ps.setInt(1, movie.getId());
-            ps.execute();
-
-        } catch (SQLIntegrityConstraintViolationException e) {
-            throw e;
-
-        } catch (SQLException e) {
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException e) {
-                System.out.println(e);
-
-            }
-            try {
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                System.out.println(e);
-            }
-        }
-    }
 }

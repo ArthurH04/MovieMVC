@@ -2,25 +2,29 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package view;
+package view.actor;
 
 import controller.ActorController;
 import java.awt.event.ActionEvent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import view.actorFilm.ActorMovieAssociation;
 
-public class ActorRegistrationScreen extends javax.swing.JFrame {
+public class ActorEditScreen extends javax.swing.JFrame {
 
     private JFrame previousScreen;
+    private int id = 0;
 
     /**
      * Creates new form MainScreen
      */
-    public ActorRegistrationScreen() {
+    public ActorEditScreen() {
         initComponents();
     }
 
-    public ActorRegistrationScreen(JFrame previousScreen) {
+    public ActorEditScreen(JFrame previousScreen) {
         initComponents();
         this.previousScreen = previousScreen;
     }
@@ -48,14 +52,16 @@ public class ActorRegistrationScreen extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuRegister = new javax.swing.JMenu();
+        jMenuActorRegister = new javax.swing.JMenuItem();
         jMenuMovieRegister = new javax.swing.JMenuItem();
         jMenuQuery = new javax.swing.JMenu();
         jMenuActorQuery = new javax.swing.JMenuItem();
         jMenuMovieQuery = new javax.swing.JMenuItem();
+        jMenuAssociation = new javax.swing.JMenu();
         jMenuExit = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Actor Registration");
+        setTitle("Actor Edit");
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
@@ -88,7 +94,7 @@ public class ActorRegistrationScreen extends javax.swing.JFrame {
         jButtonSave.setText("Save");
         jButtonSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveActor(evt);
+                updateActor(evt);
             }
         });
 
@@ -107,9 +113,17 @@ public class ActorRegistrationScreen extends javax.swing.JFrame {
         });
 
         jLabel5.setFont(new java.awt.Font("Cambria", 0, 24)); // NOI18N
-        jLabel5.setText("Actor Registration");
+        jLabel5.setText("Actor Edit");
 
         jMenuRegister.setText("Register");
+
+        jMenuActorRegister.setText("Actor");
+        jMenuActorRegister.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openActorRegister(evt);
+            }
+        });
+        jMenuRegister.add(jMenuActorRegister);
 
         jMenuMovieRegister.setText("Movie");
         jMenuRegister.add(jMenuMovieRegister);
@@ -131,7 +145,20 @@ public class ActorRegistrationScreen extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenuQuery);
 
+        jMenuAssociation.setText("Association");
+        jMenuAssociation.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuAssociationopenActorMovieAssociation(evt);
+            }
+        });
+        jMenuBar1.add(jMenuAssociation);
+
         jMenuExit.setText("Exit");
+        jMenuExit.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                exit(evt);
+            }
+        });
         jMenuBar1.add(jMenuExit);
 
         setJMenuBar(jMenuBar1);
@@ -141,32 +168,31 @@ public class ActorRegistrationScreen extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(68, 68, 68)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(289, 289, 289)
-                        .addComponent(jLabel5))
+                        .addComponent(jButtonSave)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonClear)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonCancel))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(68, 68, 68)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButtonSave)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButtonClear)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButtonCancel))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel4))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jComboBoxGender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextFieldActorName, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jComboBoxNationality, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jFormattedTextFieldBirthDate, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addContainerGap(322, Short.MAX_VALUE))
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jComboBoxGender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextFieldActorName, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jComboBoxNationality, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jFormattedTextFieldBirthDate, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(373, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel5)
+                .addGap(345, 345, 345))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -193,7 +219,7 @@ public class ActorRegistrationScreen extends javax.swing.JFrame {
                     .addComponent(jButtonSave)
                     .addComponent(jButtonClear)
                     .addComponent(jButtonCancel))
-                .addContainerGap(221, Short.MAX_VALUE))
+                .addContainerGap(222, Short.MAX_VALUE))
         );
 
         pack();
@@ -205,32 +231,30 @@ public class ActorRegistrationScreen extends javax.swing.JFrame {
         previousScreen.setVisible(true);
     }//GEN-LAST:event_closeWindow
 
-    private void saveActor(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActor
+    private void updateActor(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateActor
 
-        boolean success;
-
+        boolean success;    
         String name = jTextFieldActorName.getText();
         String gender = jComboBoxGender.getSelectedItem().toString();
         String nationality = jComboBoxNationality.getSelectedItem().toString();
         String birthDate = jFormattedTextFieldBirthDate.getText();
 
-        try {
-            
+        try {        
             ActorController actorController = new ActorController();
 
-            success = actorController.registerActor(name, gender, nationality, birthDate);
+            success = actorController.updateActor(id, name, gender, nationality, birthDate);
+            System.out.println(success);
             if (success) {
-                JOptionPane.showMessageDialog(null, "Successfully registered actor!");
-                this.clearFields(evt);
+                JOptionPane.showMessageDialog(null, "Successfully updated actor!");
             }else {
-                JOptionPane.showMessageDialog(null, "Error registering actor");
+                JOptionPane.showMessageDialog(null, "Error updating actor");
             }
 
         } catch (Exception e) {
             System.out.println(e);
         }
 
-    }//GEN-LAST:event_saveActor
+    }//GEN-LAST:event_updateActor
 
     private void clearFields(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearFields
         clearField(evt);
@@ -247,7 +271,31 @@ public class ActorRegistrationScreen extends javax.swing.JFrame {
         actorQueryScreen.setVisible(true);
     }//GEN-LAST:event_openActorQuery
 
-    
+    private void openActorRegister(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openActorRegister
+        this.setVisible(false);
+        ActorRegistrationScreen actorRegistrationScreen = new ActorRegistrationScreen(this);
+        actorRegistrationScreen.setVisible(true);
+    }//GEN-LAST:event_openActorRegister
+
+    private void exit(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exit
+        System.exit(0);
+    }//GEN-LAST:event_exit
+
+    private void jMenuAssociationopenActorMovieAssociation(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuAssociationopenActorMovieAssociation
+        this.setVisible(false);
+        ActorMovieAssociation actorMovieAssociation = new ActorMovieAssociation(this);
+        actorMovieAssociation.setVisible(true);
+    }//GEN-LAST:event_jMenuAssociationopenActorMovieAssociation
+
+    public void getData(int id, String name, String gender, String nationality, Date birthDate) {
+        this.id = id;
+        this.jTextFieldActorName.setText(name);
+        this.jComboBoxGender.setSelectedItem(gender);
+        this.jComboBoxNationality.setSelectedItem(nationality);
+        
+        SimpleDateFormat mask = new SimpleDateFormat("dd/MM/yyyy");
+        this.jFormattedTextFieldBirthDate.setText(mask.format(birthDate));
+    }
     
     /**
      * @param args the command line arguments
@@ -266,21 +314,27 @@ public class ActorRegistrationScreen extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ActorRegistrationScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ActorEditScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ActorRegistrationScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ActorEditScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ActorRegistrationScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ActorEditScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ActorRegistrationScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ActorEditScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ActorRegistrationScreen().setVisible(true);
+                new ActorEditScreen().setVisible(true);
             }
         });
     }
@@ -298,6 +352,8 @@ public class ActorRegistrationScreen extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenuItem jMenuActorQuery;
+    private javax.swing.JMenuItem jMenuActorRegister;
+    private javax.swing.JMenu jMenuAssociation;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenu jMenuExit;
     private javax.swing.JMenuItem jMenuMovieQuery;

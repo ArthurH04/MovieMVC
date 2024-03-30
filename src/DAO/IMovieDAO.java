@@ -6,13 +6,17 @@ package DAO;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
-import model.Actor;
+import model.Movie;
 
-public interface IActorDAO {
+/**
+ *
+ * @author arthur
+ */
+public interface IMovieDAO {
     
-    void registerActor(Actor actor);
-    ArrayList<Actor> listActors(String name);
-    void updateActor(Actor actor);
-    void deleteActor(Actor actor) throws SQLIntegrityConstraintViolationException;
+    void registerMovie(Movie movie);
+    ArrayList<Movie> listMovies(String movie);
+    void updateMovie(Movie movie);
+    void deleteMovie(Movie movie) throws SQLIntegrityConstraintViolationException;
     
 }

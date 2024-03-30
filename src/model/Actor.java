@@ -4,9 +4,8 @@
  */
 package model;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import DAO.ActorDAO;
-import java.time.LocalDate;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -74,14 +73,14 @@ public class Actor {
     }
     
     public ArrayList<Actor> listActor(String name) {
-        return new ActorDAO().listActor(name);
+        return new ActorDAO().listActors(name);
     }
     
     public void updateActor(Actor actor) {
         new ActorDAO().updateActor(actor);
     }
     
-    public void deleteActor(Actor actor) {
+    public void deleteActor(Actor actor) throws SQLIntegrityConstraintViolationException{
         new ActorDAO().deleteActor(actor);
     }
 }
